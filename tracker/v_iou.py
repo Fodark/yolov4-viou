@@ -147,8 +147,9 @@ class V_IOU:
             if self.ttl != track['ttl']:
                 track['bboxes'] = track['bboxes'][:-(self.ttl - track['ttl'])]
             track['class'] = max(set(track['classes']), key=track['classes'].count)
-
-        return tracks_active
+        # filter out tracks with no bbox
+        self.tracks_active = list( filter(lambda x: len(x['bboxes']) > 0, self.tracks_active) )
+        return self.tracks_active
 
    
 
