@@ -137,17 +137,22 @@ class VideoTracker(object):
                     #-----#-----
                     # do tracking
                     o = self.tracker.update(idx_frame, im, detections)
-                    # modifying tracker object results in wrong tracking
-                    outputs = copy.deepcopy(o)
                     
-                    # transofrm bboxes in format to display
-                    for o in outputs:
-                        o['bboxes'][-1] = self.tracker._xywh_to_tlwh(o['bboxes'][-1])
-                        o['bboxes'][-1] = self.tracker._tlwh_to_xyxy(o['bboxes'][-1])
+                    # modifying tracker object results in wrong tracking
+                    #outputs = copy.deepcopy(o)
+                    outputs = []
+
+                    for tmp in o:
+                        bbox = copy.deepcopy(tmp['bboxes'][-1])
+                        # transofrm bbox in correct format
+                        bbox = self.tracker._xywh_to_tlwh(bbox)
+                        bbox = self.tracker._tlwh_to_xyxy(bbox)
+                        identity = copy.deepcopy(tmp['id'])
+                        outputs.append({'bbox': bbox, 'id': identity})
 
                     # draw boxes for visualization
                     if len(outputs) > 0:
-                        bbox_xyxy = list(map(lambda x: x['bboxes'][-1], outputs))
+                        bbox_xyxy = list(map(lambda x: x['bbox'], outputs))
                         identities = list(map(lambda x: x['id'], outputs))
                         ori_im = draw_boxes(ori_im, bbox_xyxy, identities)
                         
