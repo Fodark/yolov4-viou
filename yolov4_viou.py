@@ -155,8 +155,12 @@ class VideoTracker(object):
                         bbox_xyxy = list(map(lambda x: x['bbox'], outputs))
                         identities = list(map(lambda x: x['id'], outputs))
                         ori_im = draw_boxes(ori_im, bbox_xyxy, identities)
+
+                        bbox_tlwh = []
+                        for bb in bbox_xyxy:
+                            bbox_tlwh.append(self.tracker._xyxy_to_tlwh(bb))
                         
-                        results.append((idx_frame - 1, bbox_xyxy, identities))
+                        results.append((idx_frame - 1, bbox_tlwh, identities))
 
                     end = time.time()
 
